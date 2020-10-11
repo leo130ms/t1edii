@@ -3,7 +3,10 @@
 #include "Ponto.h"
 #include <stdio.h>
 
-typedef struct matrizy MatrizY;
+typedef struct matrizy {
+    int dim;
+    double** distancias;
+}MatrizY;
 
 MatrizY* criaMatriz (int dim);
 

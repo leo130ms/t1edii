@@ -5,8 +5,8 @@
 int main ()
 {
     char nomeArquivo[50];
-    //strcpy (nomeArquivo, "1.txt");
-    scanf ("%s", nomeArquivo);
+    strcpy (nomeArquivo, "ent.txt");
+    //scanf ("%s", nomeArquivo);
     FILE* f;
     while (!(f = fopen (nomeArquivo, "r"))) 
     {
@@ -14,5 +14,7 @@ int main ()
         scanf ("%s", nomeArquivo);
     }
     MatrizY* y = constroiMatriz (f);
+    imprimeMatriz(y);
+
     return 0;
 }

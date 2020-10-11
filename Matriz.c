@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct matrizy
-{
-    int dim;
-    double** distancias;
-};
-
 MatrizY* criaMatriz (int dim)
 {
     MatrizY* y = (MatrizY*) malloc (sizeof(MatrizY));
