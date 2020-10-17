@@ -13,7 +13,7 @@ struct ponto{
 Ponto* criaponto (char* nome, int dimensao, double* coordenadas)
 {
     Ponto* novo = (Ponto*) malloc (sizeof(Ponto));
-    novo->nome = nome;
+    novo->nome = strdup (nome);
     novo->dimensao = dimensao;
     novo->coordenadas = (double*) malloc (sizeof (double) * dimensao);
     for (int i = 0; i < dimensao ; i++) 
@@ -32,9 +32,14 @@ double distanciaEuclidiana (Ponto* ponto1, Ponto* ponto2)
     return sqrt (dist);
 }
 
-void imprimePonto (Ponto* ponto)
+char* imprimePontos (Ponto** pontos, int tam){
+    for (int i = 0; i < tam; i++)
+        printf ("%s\n", pontos[i]->nome);
+}
+
+char* imprimePonto (Ponto* ponto)
 {
-    printf ("%s\n", ponto->nome);
+    return (ponto->nome);
 }
 
 void destroiPonto (Ponto* ponto)
