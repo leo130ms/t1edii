@@ -48,3 +48,8 @@ void destroiPonto (Ponto* ponto)
     free (ponto->nome);
     free (ponto);
 }
+
+void destroiPontos (Ponto** pontos, int tam){
+    for (int i = 0; i < tam; i++)
+    destroiPonto (pontos[i]);
+}

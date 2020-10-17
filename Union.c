@@ -3,7 +3,7 @@
 
 struct pais
 {
-    int id [TAM];
+    int id [MAXTAM];
     int tamanho;
 };
 

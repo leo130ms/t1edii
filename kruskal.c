@@ -22,6 +22,11 @@ Aresta* criaAresta(int index_1, int index_2, double peso){
     return a;
 }
 
+void liberaAresta (Aresta* a)
+{
+    free (a);
+}
+
 Mst* criaMst(MatrizY* y){
     Mst* mst = (Mst*)malloc(sizeof(Mst));
     mst->qtd = 0;
@@ -50,9 +55,20 @@ Mst* criaMst(MatrizY* y){
             mst->arestas[mst->qtd] = arestas[i];
             mst->qtd++;
         }
+        else
+        {
+            liberaAresta (arestas[i]);
+        }
     }
-
+    free (pais);
     return mst;
+}
+
+void liberaMst (Mst* mst)
+{
+    for (int i = 0; i < mst->qtd; i++)
+        liberaAresta (mst->arestas[i]);
+    free (mst);
 }
 
 int comparaArestas (const void* x, const void* y){
@@ -84,7 +100,11 @@ double retornaPeso (Mst* mst, int i){
 }
 
 void removeKelementos (Mst* mst, int k){
-    mst->qtd -= (k-1);
+    for (int i = 0; i < k; i++)
+    {
+        liberaAresta (mst->arestas[mst->qtd - i]);
+    }
+    mst->qtd -= (k - 1);
 }
 
 int retornaQuantidade (Mst* mst){

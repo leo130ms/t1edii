@@ -14,4 +14,6 @@ char* imprimePonto (Ponto* ponto);
 
 void destroiPonto (Ponto* ponto);
 
+void destroiPontos (Ponto** ponto, int tam);
+
 #endif

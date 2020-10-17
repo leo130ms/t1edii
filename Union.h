@@ -1,6 +1,5 @@
 #include "kruskal.h"
 #include "Matriz.h"
-#define TAM 5000
 
 typedef struct pais Pais;
 

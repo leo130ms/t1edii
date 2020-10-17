@@ -9,7 +9,11 @@ typedef struct mst Mst;
 
 Aresta* criaAresta(int index_1, int index_2, double peso);
 
+void liberaAresta (Aresta* a);
+
 Mst* criaMst(MatrizY* y);
+
+void liberaMst (Mst* mst);
 
 void ordenaArestas (Aresta** arestas, int index);
 

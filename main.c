@@ -2,6 +2,7 @@
 #include "kruskal.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 int main ()
 {
@@ -18,6 +19,7 @@ int main ()
     }
     MatrizY* y = constroiMatriz (f, k);
 
+    liberaMatriz (y);
     printf ("\n ------------------------------------------------------------------------\n");
 
    // imprimeMatriz(y);

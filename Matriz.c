@@ -41,6 +41,8 @@ void imprimePontosnoArquivo (Mst* mst, Ponto** pontos, int numPontos)
         int index_2 = retornaIndex_2 (mst, i);
         
     }
+    free (pais);
+    fclose (saida);
 }
 
 MatrizY* constroiMatriz (FILE* f, int k)
@@ -102,8 +104,9 @@ MatrizY* constroiMatriz (FILE* f, int k)
     removeKelementos (mst, k);
     ImprimeMst (mst);
     imprimePontosnoArquivo (mst, pontos, numPontos);
+    liberaMst (mst);
+    destroiPontos (pontos, numPontos);
     //imprimePontos (pontos, numPontos);
-
     return matriz;  
 }
 
@@ -118,4 +121,12 @@ void imprimeMatriz (MatrizY* matriz)
     }
 }
 
-void liberaMatriz (MatrizY* matriz);
+void liberaMatriz (MatrizY* matriz)
+{
+    for (int i = 0; i < matriz->dim; i++)
+    {
+        free (matriz->distancias[i]);
+    }
+    free (matriz->distancias);
+    free (matriz);
+}
