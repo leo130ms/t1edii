@@ -100,7 +100,7 @@ double retornaPeso (Mst* mst, int i){
 }
 
 void removeKelementos (Mst* mst, int k){
-    for (int i = 0; i < k; i++)
+    for (int i = 1; i < k; i++)
     {
         liberaAresta (mst->arestas[mst->qtd - i]);
     }
