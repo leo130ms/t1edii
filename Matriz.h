@@ -3,17 +3,19 @@
 #include "Ponto.h"
 #include <stdio.h>
 
-typedef struct matrizy {
-    int dim;
-    double** distancias;
-}MatrizY;
+typedef struct matrizy MatrizY;
 
 MatrizY* criaMatriz (int dim);
 
-MatrizY* constroiMatriz (FILE* f);
+int retornaDimensao (MatrizY* y);
+
+double retornaDistancias (MatrizY* y, int i, int j);
+
+MatrizY* constroiMatriz (FILE* f, int k);
 
 void imprimeMatriz (MatrizY* matriz);
 
 void liberaMatriz (MatrizY* matriz);
+
 
 #endif
