@@ -92,7 +92,7 @@ MatrizY* constroiMatriz (FILE* f, int k)
     {
         for (int j = 0; j < numPontos; j++)
         {
-            if (i >= j)
+            if (i > j)
             matriz->distancias[i][j] = distanciaEuclidiana (pontos[i], pontos[j]);
             else 
             matriz->distancias[i][j] = -1;
