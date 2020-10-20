@@ -103,7 +103,7 @@ MatrizY* constroiMatriz (FILE* f, int k)
     Mst* mst = criaMst (matriz);
     removeKelementos (mst, k);
     ImprimeMst (mst);
-    imprimePontosnoArquivo (mst, pontos, numPontos);
+    //imprimePontosnoArquivo (mst, pontos, numPontos);
     liberaMst (mst);
     destroiPontos (pontos, numPontos);
     //imprimePontos (pontos, numPontos);

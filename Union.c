@@ -3,13 +3,14 @@
 
 struct pais
 {
-    int id [MAXTAM];
+    int* id;
     int tamanho;
 };
 
 Pais* criaPais (int tam)
 {
     Pais* p = (Pais*) malloc (sizeof (Pais));
+    p->id = (int*) malloc (sizeof (int) * tam);
     for (int i = 0; i < tam; i++) p->id[i] = i;
     p->tamanho = tam;
     return p;

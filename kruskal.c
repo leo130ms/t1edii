@@ -1,7 +1,9 @@
 #include "kruskal.h"
 #include "Matriz.h"
 #include "Union.h"
+#include "Ponto.h"
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 
 struct aresta{
@@ -10,7 +12,7 @@ struct aresta{
 };
 
 struct mst{
-    Aresta* arestas[MAXTAM];
+    Aresta** arestas;
     int qtd;
 };
 
@@ -31,35 +33,45 @@ Mst* criaMst(MatrizY* y){
     Mst* mst = (Mst*)malloc(sizeof(Mst));
     mst->qtd = 0;
     int dim = retornaDimensao (y);
-    Aresta* arestas [MAXTAM];
+    Aresta** arestas;
+    arestas = (Aresta**) malloc (sizeof (Aresta*)* (dim * dim));
     int index = 0;
-    for (int i = 0; i < dim; i++)
+    for (int i = 1; i < dim; i++)
     {
-        for (int j = 0; j < dim; j++){
-            if (i > j){
+        for (int j = 0; j < i; j++){
+           // if (i > j){
                arestas[index] = criaAresta(i, j, retornaDistancias (y, i, j));
-               index++;
-               //printf ("index: %d\n", index);      
-            }
+              // printf ("index: %d\n", index);   
+               index++;   
+          //  }
         }
     }
 
+
     Pais* pais = criaPais (index);
     ordenaArestas (arestas, index);
+    mst->arestas = (Aresta**) malloc (sizeof (Aresta*) * index);
+
+    //printf ("%d %d\n", index, (dim * dim));
 
     for (int i = 0; i < index; i++)
     {
         if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais))
         {
             UF_union (arestas[i]->index_1, arestas[i]->index_2, pais);
-            mst->arestas[mst->qtd] = arestas[i];
+            //printf ("UF_union OK\n\n\n\n\n\n");
+
+            mst->arestas[mst->qtd] = criaAresta (arestas[i]->index_1, arestas[i]->index_2, arestas[i]->peso);
+            //printf ("mst.arestas OK\n\n\n\n\n\n");
+
             mst->qtd++;
-        }
-        else
-        {
-            liberaAresta (arestas[i]);
+            //printf ("mst->qtd OK\n\n\n\n\n\n");
         }
     }
+
+    for (int i = 0; i < index; i++)
+        liberaAresta (arestas[i]);
+    free (arestas);
     free (pais);
     return mst;
 }
@@ -68,13 +80,12 @@ void liberaMst (Mst* mst)
 {
     for (int i = 0; i < mst->qtd; i++)
         liberaAresta (mst->arestas[i]);
+    free (mst->arestas);
     free (mst);
 }
 
 int comparaArestas (const void* x, const void* y){
-    Aresta* index_1 = *(Aresta**) x;
-    Aresta* index_2 = *(Aresta**) y;
-    return (index_1->peso > index_2->peso);
+    return (*(Aresta**) x)->peso > (*(Aresta**) y)->peso;
 }
 
 void ordenaArestas (Aresta** arestas, int index)
