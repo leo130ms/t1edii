@@ -16,6 +16,12 @@ Pais* criaPais (int tam)
     return p;
 }
 
+void liberaPais (Pais* p)
+{
+    free (p->id);
+    free (p);
+}
+
 void UF_union(int p, int q, Pais* pais){
     int pid = pais->id[p];
     int qid = pais->id[q];

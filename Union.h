@@ -5,6 +5,8 @@ typedef struct pais Pais;
 
 Pais* criaPais (int tam);
 
+void liberaPais (Pais* p);
+
 void UF_union(int p, int q, Pais* pais);
 
 int UF_find(int p, Pais* pais);

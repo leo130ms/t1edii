@@ -72,7 +72,7 @@ Mst* criaMst(MatrizY* y){
     for (int i = 0; i < index; i++)
         liberaAresta (arestas[i]);
     free (arestas);
-    free (pais);
+    liberaPais (pais);
     return mst;
 }
 
