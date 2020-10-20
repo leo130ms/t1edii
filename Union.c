@@ -22,18 +22,24 @@ void liberaPais (Pais* p)
     free (p);
 }
 
-void UF_union(int p, int q, Pais* pais){
-    int pid = pais->id[p];
-    int qid = pais->id[q];
-    for (int i = 0; i < pais->tamanho; i++)
-    {
-        if (pais->id[i] == pid)
-            pais->id[i] = qid;
+void UF_union(int p, int q, Pais* pais, int *h){
+    int i = UF_find(p, pais);
+    int j = UF_find(q, pais);
+    if(h[i]<h[j]){
+        pais->id[i]=j;
+        h[j]+=h[i];
+    }else{
+        pais->id[j]=i;
+        h[i]+=h[j];
     }
 }
 
 int UF_find(int p, Pais* pais){
-    return pais->id[p];
+    while(p != pais->id[p]){
+        pais->id[p] = pais->id[pais->id[p]];
+        p = pais->id[p];
+    }
+    return p;
 }
 
 int UF_connected(int p, int q, Pais* pais){
