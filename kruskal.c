@@ -54,11 +54,13 @@ Mst* criaMst(MatrizY* y){
 
     //printf ("%d %d\n", index, (dim * dim));
 
+    int *altura = (int*)calloc(index, sizeof(int));
+
     for (int i = 0; i < index; i++)
     {
         if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais))
         {
-            UF_union (arestas[i]->index_1, arestas[i]->index_2, pais);
+            UF_union (arestas[i]->index_1, arestas[i]->index_2, pais, altura);
             //printf ("UF_union OK\n\n\n\n\n\n");
 
             mst->arestas[mst->qtd] = criaAresta (arestas[i]->index_1, arestas[i]->index_2, arestas[i]->peso);
@@ -69,6 +71,7 @@ Mst* criaMst(MatrizY* y){
         }
     }
 
+    free(altura);
     for (int i = 0; i < index; i++)
         liberaAresta (arestas[i]);
     free (arestas);
