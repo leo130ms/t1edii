@@ -15,7 +15,9 @@ Mst* criaMst(MatrizY* y);
 
 void liberaMst (Mst* mst);
 
-void ordenaArestas (Aresta** arestas, int index);
+int reparteArray(Aresta** a, int lo, int hi);
+
+void ordenaArestas (Aresta** arestas, int lo, int hi);
 
 void ImprimeMst (Mst* mst);
 
@@ -31,4 +33,4 @@ void removeKelementos (Mst* mst, int k);
 
 double retornaPeso (Mst* mst, int i);
 
-#endif 
+#endif  
