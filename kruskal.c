@@ -34,7 +34,7 @@ Mst* criaMst(MatrizY* y){
     mst->qtd = 0;
     int dim = retornaDimensao (y);
     Aresta** arestas;
-    arestas = (Aresta**) malloc (sizeof (Aresta*)* (dim * dim));
+    arestas = (Aresta**) malloc (sizeof (Aresta*) * (dim * dim));
     int index = 0;
     for (int i = 1; i < dim; i++)
     {
@@ -49,7 +49,7 @@ Mst* criaMst(MatrizY* y){
 
 
     Pais* pais = criaPais (index);
-    ordenaArestas (arestas, index);
+    ordenaArestas (arestas, 0, (index-1));
     mst->arestas = (Aresta**) malloc (sizeof (Aresta*) * index);
 
     //printf ("%d %d\n", index, (dim * dim));
@@ -84,13 +84,40 @@ void liberaMst (Mst* mst)
     free (mst);
 }
 
-int comparaArestas (const void* x, const void* y){
-    return (*(Aresta**) x)->peso > (*(Aresta**) y)->peso;
+int reparteArray(Aresta** a, int lo, int hi){
+    int i = lo+1;
+    int j = hi;
+    Aresta* pivo = a[lo];
+    Aresta* aux;
+
+    while(i < j){
+        if(a[i]->peso <= pivo->peso){ 
+            i++;
+        }
+        else if (a[j]->peso > pivo->peso){
+            j--;
+        }
+        else if (i <= j){
+            aux = a[i];
+            a[i] = a[j];
+            a[j] = aux;
+            i++;
+            j--;
+        }
+    }
+    aux = a[lo];
+    a[lo] = a[j];
+    a[j] = aux;
+    return j;
 }
 
-void ordenaArestas (Aresta** arestas, int index)
+void ordenaArestas(Aresta** a, int lo, int hi)
 {
-    qsort (arestas, index, sizeof(Aresta*), comparaArestas);
+    if(lo<hi){
+        int j = reparteArray(a, lo, hi);
+        ordenaArestas(a, lo, j-1);
+        ordenaArestas(a, j+1, hi);
+    }
 }
 
 void ImprimeMst (Mst* mst){
