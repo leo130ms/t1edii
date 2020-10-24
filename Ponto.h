@@ -14,6 +14,10 @@ char* imprimePonto (Ponto* ponto);
 
 void destroiPonto (Ponto* ponto);
 
+void inserePonto (Ponto* ponto, Ponto** grupo, int pos);
+
+Ponto* achaPonto (Ponto* ponto, Ponto* grupo, int tam);
+
 void destroiPontos (Ponto** ponto, int tam);
 
 #endif

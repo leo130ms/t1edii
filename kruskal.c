@@ -144,8 +144,8 @@ void removeKelementos (Mst* mst, int k){
     for (int i = 1; i < k; i++)
     {
         liberaAresta (mst->arestas[mst->qtd - i]);
+        mst->qtd--;
     }
-    mst->qtd -= (k - 1);
 }
 
 int retornaQuantidade (Mst* mst){

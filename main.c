@@ -4,24 +4,18 @@
 #include <string.h>
 #include <stdlib.h>
 
-int main ()
+int main (int argc, char* argv[])
 {
     char nomeArquivo[50];
+    //strcpy (nomeArquivo, argv[0]);
     strcpy (nomeArquivo, "ent.txt");
     //scanf ("%s", nomeArquivo);
-    int k = 3;
+    int k = atoi (argv[1]);
     //scanf ("%d", &k);
     FILE* f;
-    while (!(f = fopen (nomeArquivo, "r"))) 
-    {
-        printf ("Arquivo %s não encontrado!\n", nomeArquivo);
-        scanf ("%s", nomeArquivo);
-    }
-    MatrizY* y = constroiMatriz (f, k);
-
-    liberaMatriz (y);
-    printf ("\n ------------------------------------------------------------------------\n");
-
+    if (!(f = fopen (nomeArquivo, "r"))) 
+        exit(1);
+    constroiMatriz (f, k, argv[2]);
    // imprimeMatriz(y);
     return 0;
 }
