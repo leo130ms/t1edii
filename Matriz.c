@@ -110,14 +110,15 @@ MatrizY* constroiMatriz (FILE* f, int k)
     return matriz;  
 }
 
-void imprimeMatriz (MatrizY* matriz)
+void imprimeMatriz (FILE* log, MatrizY* matriz)
 {
+    fprintf(log, "\n-------Matriz Y distâncias------\n");
     for (int i = 0; i < matriz->dim; i++)
     {
-    printf ("\n");
+    fprintf (log, "\n");
         for (int j = 0; j < matriz->dim; j++)
             if (i > j)
-                printf ("%lf ", matriz->distancias[i][j]);
+                fprintf (log, "%lf ", matriz->distancias[i][j]);
     }
 }
 

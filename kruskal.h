@@ -19,7 +19,7 @@ int reparteArray(Aresta** a, int lo, int hi);
 
 void ordenaArestas (Aresta** arestas, int lo, int hi);
 
-void ImprimeMst (Mst* mst);
+void ImprimeMst (FILE* log, Mst* mst);
 
 int retornaQuantidade (Mst* mst);
 
