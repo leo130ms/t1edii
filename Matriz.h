@@ -13,7 +13,8 @@ double retornaDistancias (MatrizY* y, int i, int j);
 
 void constroiMatriz (FILE* f, int k, char* nomeArqSaida);
 
-void imprimeMatriz (MatrizY* matriz);
+void imprimeMatriz (FILE* log, MatrizY* matriz);
+
 
 void liberaMatriz (MatrizY* matriz);
 

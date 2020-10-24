@@ -123,9 +123,11 @@ void ordenaArestas(Aresta** a, int lo, int hi)
     }
 }
 
-void ImprimeMst (Mst* mst){
-    for (int i = 0; i <mst->qtd; i++)
-        printf ("(%d, %d) peso: %lf\n", mst->arestas[i]->index_1, mst->arestas[i]->index_2, mst->arestas[i]->peso);
+void ImprimeMst (FILE* log, Mst* mst){
+    fprintf(log, "\n-------Mst------\n");
+    for (int i = 0; i <mst->qtd; i++){
+        fprintf (log, "(%d, %d) peso: %lf\n", mst->arestas[i]->index_1, mst->arestas[i]->index_2, mst->arestas[i]->peso);
+    }
 }
 
 int retornaIndex_1 (Mst* mst, int i){
@@ -155,9 +157,3 @@ int retornaQuantidade (Mst* mst){
 Aresta* retornaAresta (Mst* mst, int i){
     return mst->arestas[i];
 }
-
-//fazer um imprime mst para ajudar
-
-//implementar o qsort e ordenar as arestas por peso
-
-//continuar a mst
