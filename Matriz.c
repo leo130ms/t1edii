@@ -66,23 +66,9 @@ void imprimePontosnoArquivo (Mst* mst, Ponto** pontos, int numPontos, char* nome
 
     for (int i = 0; i < numPontos; i++)
     {
-        char grupo[MAXTAM];
-        strcpy (grupo, "\0");
-        if (!strstr (grupo, imprimePonto(pontos[i])))
-        {
-            for (int j = i; j < numPontos; j++)
-            if (UF_connected (i, j, pais))
-            {
-                strcat (grupo, imprimePonto(pontos[j]));
-                strcat (grupo, ",");
-            }
-  //          printf ("%s", grupo);
-            string_saida[numGrupos] = strdup (grupo);
-            numGrupos++;
-        }
+        
     }
 
-    printf ("%s", string_saida[0]);  
 
     free (altura);
     liberaPais(pais);
