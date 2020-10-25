@@ -3,6 +3,7 @@
 #include "Union.h"
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 struct matrizy {
     int dim;
@@ -188,7 +189,8 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
     int numPontos = 0;
     int dimensao = 0;
     char c = fgetc(f);
-
+     
+    clock_t sLeitura = clock();
     while (c != '\n')
     {
         if (c == ',') dimensao++;
@@ -221,11 +223,16 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
     }
 
     fclose (f);
+    clock_t eLeitura = clock();
+
+    double tLeitura = ((double)eLeitura - sLeitura) / CLOCKS_PER_SEC;
+    printf ("Tempo de Leitura: %lf\n", tLeitura);
     //printf ("%d\n", dimensao);
     //printf ("%d\n", numPontos);
 
+    clock_t sCalcDist = clock();
     MatrizY* matriz = criaMatriz (numPontos); 
- 
+
     for (int i = 0; i < numPontos; i++)
     {
         for (int j = 0; j < numPontos; j++)
@@ -236,11 +243,27 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
             matriz->distancias[i][j] = -1;
         }
     }
+    clock_t eCalcDist = clock();
+    double tCalcDist = ((double)eCalcDist - sCalcDist) / CLOCKS_PER_SEC;
+    printf ("Tempo de calculo das distancias: %lf\n", tCalcDist);
+
 
     Mst* mst = criaMst (matriz);
+
+    clock_t sIdfGrupos = clock();
     removeKelementos (mst, k);
+    clock_t eIdfGrupos = clock();
+    double tIdfGrupos = ((double)eIdfGrupos - sIdfGrupos) / CLOCKS_PER_SEC;
+    printf ("Tempo de identificacao dos grupos: %lf\n", tIdfGrupos);
+    
     ImprimeMst (mst);
+
+    clock_t sEscrita = clock();
     imprimePontosnoArquivo (nomeSaida, mst, pontos, numPontos);
+    clock_t eEscrita = clock();
+    double tEscrita = ((double)eEscrita - sEscrita) / CLOCKS_PER_SEC;
+    printf ("Tempo de calculo das distancias: %lf\n", tEscrita);
+
     liberaMst (mst);
     destroiPontos (pontos, numPontos);
     //imprimePontos (pontos, numPontos);
