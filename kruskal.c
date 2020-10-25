@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct aresta{
     int index_1, index_2;//indices que indicam um ponto cada
@@ -49,11 +50,17 @@ Mst* criaMst(MatrizY* y){
 
 
     Pais* pais = criaPais (index);
+    clock_t sOrdenacao = clock();
     ordenaArestas (arestas, index);
+    clock_t eOrdenracao = clock();
+    double tOrdenacao = ((double)eOrdenracao - sOrdenacao) / CLOCKS_PER_SEC;
+    printf ("Tempo para ordenacao das arestas: %lf\n", tOrdenacao);
+
     mst->arestas = (Aresta**) malloc (sizeof (Aresta*) * index);
 
     //printf ("%d %d\n", index, (dim * dim));
 
+    clock_t sMontaMst = clock();
     for (int i = 0; i < index; i++)
     {
         if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais))
@@ -68,6 +75,9 @@ Mst* criaMst(MatrizY* y){
             //printf ("mst->qtd OK\n\n\n\n\n\n");
         }
     }
+    clock_t eMontaMst = clock();
+    double tMontaMst = ((double)eMontaMst - sMontaMst) / CLOCKS_PER_SEC;
+    printf ("Tempo para montar mst: %lf\n", tMontaMst);
 
     for (int i = 0; i < index; i++)
         liberaAresta (arestas[i]);
