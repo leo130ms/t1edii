@@ -5,13 +5,16 @@ struct pais
 {
     int* id;
     int tamanho;
+    int* pesos;
 };
 
 Pais* criaPais (int tam)
 {
     Pais* p = (Pais*) malloc (sizeof (Pais));
     p->id = (int*) malloc (sizeof (int) * tam);
+    p->pesos = (int*) malloc (sizeof (int) * tam);
     for (int i = 0; i < tam; i++) p->id[i] = i;
+    for (int i = 0; i < tam; i++) p->pesos[i] = i;
     p->tamanho = tam;
     return p;
 }
@@ -19,23 +22,29 @@ Pais* criaPais (int tam)
 void liberaPais (Pais* p)
 {
     free (p->id);
+    free (p->pesos);
     free (p);
 }
 
-void UF_union(int p, int q, Pais* pais, int *h){
-    int i = UF_find(p, pais);
-    int j = UF_find(q, pais);
-    if(h[i]<h[j]){
-        pais->id[i]=j;
-        h[j]+=h[i];
-    }else{
-        pais->id[j]=i;
-        h[i]+=h[j];
+void UF_union(int p, int q, Pais* pais){
+    int i = UF_find (pais->id[p], pais);
+    int j = UF_find (pais->id[q], pais);
+    if ( i == j ) return;
+    if (pais->pesos[i] < pais->pesos[j])
+    {
+        pais->id[i] = j;
+        pais->pesos[j] += pais->pesos[i];
+    }
+    else
+    {
+        pais->id[j] = i;
+        pais->pesos[i] += pais->pesos[j];
     }
 }
 
 int UF_find(int p, Pais* pais){
-    while(p != pais->id[p]){
+    while (p != pais->id[p]) 
+    {
         pais->id[p] = pais->id[pais->id[p]];
         p = pais->id[p];
     }

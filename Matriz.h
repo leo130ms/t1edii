@@ -11,10 +11,9 @@ int retornaDimensao (MatrizY* y);
 
 double retornaDistancias (MatrizY* y, int i, int j);
 
-void constroiMatriz (FILE* f, int k, char* nomeArqSaida);
+MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida);
 
-void imprimeMatriz (FILE* log, MatrizY* matriz);
-
+void imprimeMatriz (MatrizY* matriz);
 
 void liberaMatriz (MatrizY* matriz);
 

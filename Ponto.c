@@ -49,18 +49,6 @@ void destroiPonto (Ponto* ponto)
     free (ponto);
 }
 
-void inserePonto (Ponto* ponto, Ponto** grupo, int pos)
-{
-    grupo[pos] = ponto;
-}
-
-Ponto* achaPonto (Ponto* ponto, Ponto* grupo, int tam)
-{
-    for (int i = 0; i < tam; i++)
-        if (grupo[i].nome == ponto->nome) grupo[i];
-    return NULL;
-}
-
 void destroiPontos (Ponto** pontos, int tam){
     for (int i = 0; i < tam; i++)
     destroiPonto (pontos[i]);

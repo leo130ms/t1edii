@@ -9,6 +9,13 @@ struct matrizy {
     double** distancias;
 };
 
+typedef struct grupo
+{
+  int indices[MAXTAM];
+  int tam;  
+}Grupo;
+
+
 MatrizY* criaMatriz (int dim)
 {
     MatrizY* y = (MatrizY*) malloc (sizeof(MatrizY));
@@ -29,53 +36,223 @@ double retornaDistancias (MatrizY* y, int i, int j){
     return y->distancias[i][j];
 }
 
-int substring (char* str1, char* str2)
+int comparaStrings (const void* s1, const void* s2)
 {
-    int j = 0;
-    for (int i = 0; i < strlen(str1); i++)
-    {
-        if (str1[i] == str2[i])
-        {
-            for (j = 0; j < strlen (str1); j++)
-            {
-                if (str1[i + j] != str2[j]) break;
-            }
-        }
-    }
-    return j == strlen (str2);
+    return strcmp ((char*) s1, (char*) s2);
 }
 
-void imprimePontosnoArquivo (Mst* mst, Ponto** pontos, int numPontos, char* nomeArqSaida)
+int achaString (char** texto, int numStrings, char* word)
 {
-    FILE* saida = fopen (nomeArqSaida, "w");
-    Pais* pais = criaPais (numPontos);
+    //printf ("%s %s\n", texto, word);
+    for (int i = 0; i < numStrings; i++)
+    {
+        for (int j = 0; j < strlen (word); j++)
+            if (strchr (texto[i], word[j])) return 1;
+    }
+    return -1;
+}
+
+Ponto* achaPontoNoGrupo (Grupo* g, int indice)
+{
+    for (int i = 0; i < g->tam; i++)
+        if (g->indices[i] == indice) return g->indices[i];
+    return 0;
+}
+
+Ponto* achaPontoNosGrupos (Grupo** gs, int indice, int numGrupos)
+{
+    if (numGrupos <= 0) return 0;
+    for (int i = 0; i < numGrupos; i++)
+        if (achaPontoNoGrupo(gs[i], indice)) return achaPontoNoGrupo(gs[i], indice);
+    return 0;
+}
+
+int achaGrupo (Grupo** gs, Ponto* p, int numGrupos)
+{
+    if (numGrupos <= 0) return 0;
+    for (int i = 0; i < numGrupos; i++)
+        if (achaPontoNoGrupo(gs[i], p)) return i+1;
+    return 0;
+}
+
+void imprimeGrupos (Grupo** gs, int numGrupos)
+{
+    for (int i = 0; i < numGrupos; i++)
+    {
+        for (int j = 0; j < gs[i]->tam - 1; j++)
+        {
+        }
+    }
+}
+
+void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numPontos)
+{
+    FILE* saida = fopen (nomeSaida, "w");
+    int tamMst = retornaQuantidade (mst);
+    Grupo** grupos = (Grupo**) malloc (sizeof (Grupo*)* tamMst);
+    for (int i = 0; i < tamMst; i++)
+    {
+        grupos[i] = (Grupo*) malloc (sizeof (Grupo));
+        grupos[i]->tam = 0;
+    }
+    int numGrupos = 0;
+
+    for (int i = 0; i < tamMst; i++)
+    {
+        printf ("AAAAAAAAAAAA\n");
+        int index1 = retornaIndex_1 (mst, i);
+        int index2 = retornaIndex_2 (mst, i);
+        if (!achaPontoNosGrupos (grupos, index1, numGrupos) && !achaPontoNosGrupos (grupos, index2, numGrupos))
+        {
+            for (int j = i; j <tamMst; j++)
+            {
+                int jndex1 = retornaIndex_1 (mst, j);
+                int jndex2 = retornaIndex_2 (mst, j);
+                if (jndex1 == index1)
+                {
+                    grupos[numGrupos]->indices[grupos[numGrupos]->tam] = jndex2;
+                    grupos[numGrupos]->tam++;
+                    printf ("AAAAAAAAAAAA\n");
+                }
+                
+                else if (jndex2 == index2)
+                {
+                    grupos[numGrupos]->indices[grupos[numGrupos]->tam] = jndex1;
+                    grupos[numGrupos]->tam++;
+                }
+                else if (jndex2 == index1)
+                {
+                    grupos[numGrupos]->indices[grupos[numGrupos]->tam] = jndex1;
+                    grupos[numGrupos]->tam++;
+                }
+                else if (jndex1 == index2)
+                {
+                    grupos[numGrupos]->indices[grupos[numGrupos]->tam] = jndex2;
+                    grupos[numGrupos]->tam++;
+                }      
+            }
+            numGrupos++;
+            imprimeGrupos (grupos, numGrupos);
+        }
+    }
+
+    imprimeGrupos (grupos, numGrupos);    
+}
+
+/*void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numPontos)
+{
+    FILE* saida = fopen (nomeSaida, "w");
     char* string_saida[MAXTAM];
     int numGrupos = 0;
-    int *altura = (int*)calloc(numPontos, sizeof(int));
-    for (int i = 0; i < retornaQuantidade (mst); i++)
+    char grupo[MAXTAM];
+    int index01 = retornaIndex_1 (mst, 0);
+    int index02 = retornaIndex_2 (mst, 0);
+    char ponto2[MAXTAM];
+    strcpy (grupo, imprimePonto (pontos[index01]));
+    //strcat (grupo, ",");
+    strcpy (ponto2, imprimePonto (pontos[index02]));
+    strcat (grupo, ponto2);
+    //strcat (grupo, ",");
+
+    for (int j = 1; j < retornaQuantidade (mst); j++)
     {
-        int index_1 = retornaIndex_1 (mst, i);
-        int index_2 = retornaIndex_2 (mst, i);
-        if (!UF_connected (index_1, index_2, pais))
+        char ponto1[MAXTAM];
+        char ponto2[MAXTAM];
+        int jndex1 = retornaIndex_1 (mst, j);
+        int jndex2 = retornaIndex_2 (mst, j);
+        if (jndex1 == index01)
         {
-            UF_union (index_1, index_2, pais, altura);
-            printf ("%d %d\n", index_1, index_2);
+            strcat (grupo, imprimePonto (pontos[jndex2]));
+            //strcat (grupo, ",");
         }
+        else if (jndex2 == index02)
+        {
+            strcat (grupo, imprimePonto (pontos[jndex1]));
+           // strcat (grupo, ",");
+        }
+        else if (jndex2 == index01)
+        {
+            strcat (grupo, imprimePonto (pontos[jndex1]));
+            //strcat (grupo, ",");
+        }
+        else if (jndex1 == index02)
+        {
+            strcat (grupo, imprimePonto (pontos[jndex2]));
+            //strcat (grupo, ",");
+        }         
     }
+    string_saida[numGrupos] = strdup (grupo);
+    numGrupos++;
 
 
-    for (int i = 0; i < numPontos; i++)
+    for (int i = 1; i < retornaQuantidade (mst); i++)
     {
-        
+        char grupo[MAXTAM];
+        int index1 = retornaIndex_1 (mst, i);
+        int index2 = retornaIndex_2 (mst, i);
+        char ponto2[MAXTAM];
+        strcpy (grupo, imprimePonto (pontos[index1]));
+        //strcat (grupo, ",");
+        strcpy (ponto2, imprimePonto (pontos[index2]));
+        strcat (grupo, ponto2);
+        //strcat (grupo, ",");
+        if (achaString (string_saida, numGrupos, grupo) < 0)
+        {
+            //printf ("%c %c\n", grupo[0], grupo[1]);
+            for (int j = i+1; j < retornaQuantidade (mst); j++)
+            {
+                char ponto1[MAXTAM];
+                char ponto2[MAXTAM];
+                int jndex1 = retornaIndex_1 (mst, j);
+                int jndex2 = retornaIndex_2 (mst, j);
+                if (jndex1 == index1)
+                {
+                    strcat (grupo, imprimePonto (pontos[jndex2]));
+                    //strcat (grupo, ",");
+                }
+                else if (jndex2 == index2)
+                {
+                    strcat (grupo, imprimePonto (pontos[jndex1]));
+                    //strcat (grupo, ",");
+                }
+                else if (jndex2 == index1)
+                {
+                    strcat (grupo, imprimePonto (pontos[jndex1]));
+                    //strcat (grupo, ",");
+                }
+                else if (jndex1 == index2)
+                {
+                    strcat (grupo, imprimePonto (pontos[jndex2]));
+                    //strcat (grupo, ",");
+                }
+            }
+            string_saida[numGrupos] = strdup (grupo);
+            numGrupos++;
+            //printf ("%s\n %d\n", string_saida[numGrupos], numGrupos);
+        }
+
     }
 
 
-    free (altura);
-    liberaPais(pais);
-    fclose (saida);
-}
+    for (int i = 0; i < numGrupos; i++)
+    {
+        qsort (string_saida[i], strlen(string_saida[i]), sizeof(char), comparaStrings);
+    }
 
-void constroiMatriz (FILE* f, int k, char* nomeArqSaida)
+    qsort (string_saida, numGrupos, sizeof (char**), comparaStrings);
+
+    for (int i = 0; i < numGrupos; i++)
+    {
+        for (int j = 0; j < strlen (string_saida[i]); j++)
+        fprintf (saida, "%s,", string_saida[i]);
+    }
+
+    //fprintf (saida, "%s,", string_saida[numGrupos]);
+
+    fclose (saida);
+}*/
+
+MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
 {
     int numPontos = 0;
     int dimensao = 0;
@@ -102,7 +279,7 @@ void constroiMatriz (FILE* f, int k, char* nomeArqSaida)
         double coordenadas[dimensao];
 
         fscanf (f, " %[^,],", nome);
-//        printf ("%s->", nome);
+        //printf ("%s ->", nome);
 
         for (int j = 0; j < dimensao; j++)
         {
@@ -129,26 +306,24 @@ void constroiMatriz (FILE* f, int k, char* nomeArqSaida)
         }
     }
 
-
     Mst* mst = criaMst (matriz);
     removeKelementos (mst, k);
     ImprimeMst (mst);
-    imprimePontosnoArquivo (mst, pontos, numPontos, nomeArqSaida);
+    imprimePontosnoArquivo (nomeSaida, mst, pontos, numPontos);
     liberaMst (mst);
     destroiPontos (pontos, numPontos);
     //imprimePontos (pontos, numPontos);
-    liberaMatriz (matriz);
+    return matriz;  
 }
 
-void imprimeMatriz (FILE* log, MatrizY* matriz)
+void imprimeMatriz (MatrizY* matriz)
 {
-    fprintf(log, "\n-------Matriz Y distâncias------\n");
     for (int i = 0; i < matriz->dim; i++)
     {
-    fprintf (log, "\n");
+    printf ("\n");
         for (int j = 0; j < matriz->dim; j++)
             if (i > j)
-                fprintf (log, "%lf ", matriz->distancias[i][j]);
+                printf ("%lf ", matriz->distancias[i][j]);
     }
 }
 
