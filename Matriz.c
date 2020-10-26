@@ -3,17 +3,13 @@
 #include "Union.h"
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 
 struct matrizy {
-    int dim;
-    double** distancias;
+    int dim; //dimensão da matriz quadrada
+    double** distancias; //matriz com nxn valores representando as distâncias
 };
-
-typedef struct grupo
-{
-  int indices[MAXTAM];
-  int tam;  
-}Grupo;
 
 
 MatrizY* criaMatriz (int dim)
@@ -90,7 +86,7 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
 
     /*Segmento para imprimir o primeiro dos grupos*/
 
-    for (int j = 1; j < retornaQuantidade (mst); j++) //procura nos vetores de pontos os pontos correspondentes às arestas da MST e os insere uma matriz de strings
+    for (int j = 1; j < retornaQuantidade (mst); j++)//procura nos vetores de pontos os pontos correspondentes às arestas da MST e os insere uma matriz de strings
     {
         char ponto1[MAXTAM];
         char ponto2[MAXTAM];
@@ -98,7 +94,7 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
         int jndex2 = retornaIndex_2 (mst, j);
         if (jndex1 == index01)
         {
-            strcat (grupo, imprimePonto (pontos[jndex2])); 
+            strcat (grupo, imprimePonto (pontos[jndex2]));
             strcat (grupo, ",");
         }
         else if (jndex2 == index02)
@@ -121,7 +117,7 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
     numGrupos++;
 
 
-    for (int i = 1; i < retornaQuantidade (mst); i++) //loop usado para construir os demais grupos
+    for (int i = 1; i < retornaQuantidade (mst); i++)//loop usado para construir os demais grupos
     {
         char grupo[MAXTAM];
         int index1 = retornaIndex_1 (mst, i);
@@ -132,9 +128,9 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
         strcpy (ponto2, imprimePonto (pontos[index2]));
         strcat (grupo, ponto2);
         strcat (grupo, ",");
-        if (!strstr (string_saida[numGrupos-1], grupo))
+        if (achaString (string_saida, numGrupos, grupo) < 0)
         {
-            for (int j = i+1; j < retornaQuantidade (mst); j++) 
+            for (int j = i+1; j < retornaQuantidade (mst); j++)
             {
                 char ponto1[MAXTAM];
                 char ponto2[MAXTAM];
@@ -167,18 +163,14 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
 
     }
 
+    qsort (string_saida, numGrupos, sizeof (char**), comparaStrings);//Ordenando as strings
 
-    qsort (string_saida, numGrupos, sizeof (char**), comparaStrings); //Ordenando as strings
-
-    for (int i = 0; i < numGrupos; i++)
+    for (int i = 0; i < numGrupos; i++)//Imprimindo no Arquivo
     {
-        fprintf (saida, "%s\n", string_saida[i]); //Imprimindo no Arquivo
+        fprintf (saida, "%s\n", string_saida[i]);
     }
 
-    for (int i = 0; i < numGrupos; i++) //liberando memória
-    {
-        free (string_saida[i]);
-    }
+    //liberando memória
 
     fclose (saida);
 }
@@ -189,20 +181,22 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
     int dimensao = 0;
     char c = fgetc(f);
 
+    clock_t sLeitura = clock();
+
     while (c != '\n')
     {
         if (c == ',') dimensao++;
         c = fgetc (f);
-    } //contar a dimensão dos pontos
+    } //contanto a dimensão
 
     while (c != EOF)
     {
         if (c == '\n') numPontos++;
         c = fgetc(f); 
-    } //contar o numero de pontos no arquivo
+    } //contando o numero de pontos
 
-    rewind(f); //retornando ao começo do arquivo
-    Ponto* pontos[numPontos];
+    rewind(f);
+    Ponto* pontos[numPontos]; //criando um vetor para ponteiros de pontos
 
     for (int i = 0; i <numPontos; i++)
     {
@@ -216,11 +210,16 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
             fscanf (f, "%lf,", &coordenadas[j]);
         }
         pontos[i] = criaponto (nome, dimensao, coordenadas);
-    } //lendo coisas do arquivo de entrada
+    } //realizando a leitura do arquivo
 
     fclose (f);
+    clock_t eLeitura = clock();
 
-    MatrizY* matriz = criaMatriz (numPontos); //Matriz de coordenada criada
+    double tLeitura = ((double)eLeitura - sLeitura) / CLOCKS_PER_SEC;
+    //printf ("Tempo de Leitura: %lf\n", tLeitura);
+
+    clock_t sCalcDist = clock();
+    MatrizY* matriz = criaMatriz (numPontos); 
  
     for (int i = 0; i < numPontos; i++)
     {
@@ -231,14 +230,25 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
             else 
             matriz->distancias[i][j] = -1;
         }
-    } //preenchendo a matriz
+    } //preenchendo a matriz de distancias
 
-    Mst* mst = criaMst (matriz);
-    removeKelementos (mst, k); //remover os k-1 elementos
-    imprimePontosnoArquivo (nomeSaida, mst, pontos, numPontos); //função para imprimir na saida 
-    //liberar memória
-    liberaMst (mst);
-    destroiPontos (pontos, numPontos); 
+    clock_t eCalcDist = clock();
+    double tCalcDist = ((double)eCalcDist - sCalcDist) / CLOCKS_PER_SEC;
+    //printf ("Tempo de calculo das distancias: %lf\n", tCalcDist);
+
+    clock_t sIdfGrupos = clock();
+    Mst* mst = criaMst (matriz); //processo de criar a MST
+    removeKelementos (mst, k); 
+    clock_t eIdfGrupos = clock();
+    double tIdfGrupos = ((double)eIdfGrupos - sIdfGrupos) / CLOCKS_PER_SEC;
+    //printf ("Tempo de identificacao dos grupos: %lf\n", tIdfGrupos);
+    clock_t sEscrita = clock();
+    //imprimePontosnoArquivo (nomeSaida, mst, pontos, numPontos);
+    clock_t eEscrita = clock();
+    double tEscrita = ((double)eEscrita - sEscrita) / CLOCKS_PER_SEC;
+    //printf ("Tempo de calculo das distancias: %lf\n", tEscrita);
+    liberaMst (mst); //liberando a memoria de mst
+    destroiPontos (pontos, numPontos); //liberando a memoria do vetor de pontos
     return matriz;  
 }
 

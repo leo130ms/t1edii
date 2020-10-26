@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct aresta{
     int index_1, index_2;//indices que indicam um ponto cada
@@ -12,8 +13,8 @@ struct aresta{
 };
 
 struct mst{
-    Aresta** arestas;
-    int qtd;
+    Aresta** arestas; //vetor de ponteiros para arestas
+    int qtd; //quantidade de arestas na mst
 };
 
 Aresta* criaAresta(int index_1, int index_2, double peso){
@@ -39,37 +40,39 @@ Mst* criaMst(MatrizY* y){
     for (int i = 1; i < dim; i++)
     {
         for (int j = 0; j < i; j++){
-           // if (i > j){
                arestas[index] = criaAresta(i, j, retornaDistancias (y, i, j));
-              // printf ("index: %d\n", index);   
                index++;   
-          //  }
         }
-    } //Criando o vetor com todas as Arestas
+    }//Criando o vetor com todas as Arestas
 
 
-    Pais* pais = criaPais (index); //Vetor usado para fazer as Unions
-    ordenaArestas (arestas, index); //Ordenando o vetor de Arestas via Qsort
+    Pais* pais = criaPais (index);//Vetor usado para fazer as Unions
+    clock_t sOrdenacao = clock();
+    ordenaArestas (arestas, index);//Ordenando o vetor de Arestas via Qsort
     mst->arestas = (Aresta**) malloc (sizeof (Aresta*) * index);
+    clock_t eOrdenracao = clock();
+    double tOrdenacao = ((double)eOrdenracao - sOrdenacao) / CLOCKS_PER_SEC;
+    //printf ("Tempo para ordenacao das arestas: %lf\n", tOrdenacao);
 
-
+    clock_t sMontaMst = clock();
     for (int i = 0; i < index; i++)
     {
-        if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais)) //Se duas arestas não estiverem conectadas 
+        if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais))//Se duas arestas não estiverem conectadas 
         {
-            UF_union (arestas[i]->index_1, arestas[i]->index_2, pais); //Une as duas arestas com Weighted Quick Union, usando compressão de caminho
-
-            mst->arestas[mst->qtd] = criaAresta (arestas[i]->index_1, arestas[i]->index_2, arestas[i]->peso); //è criada uma nova aresta
-
-            mst->qtd++; //quantidade de arestas na mst é incrementada
+            UF_union (arestas[i]->index_1, arestas[i]->index_2, pais);//Une as duas arestas com Weighted Quick Union, usando compressão de caminho
+            mst->arestas[mst->qtd] = criaAresta (arestas[i]->index_1, arestas[i]->index_2, arestas[i]->peso);//è criada uma nova aresta
+            mst->qtd++;//quantidade de arestas na mst é incrementada
         }
     }
 
+    clock_t eMontaMst = clock();
+    double tMontaMst = ((double)eMontaMst - sMontaMst) / CLOCKS_PER_SEC;
+    //printf ("Tempo para montar mst: %lf\n", tMontaMst);
     for (int i = 0; i < index; i++)
-        liberaAresta (arestas[i]); //liberando memória
+        liberaAresta (arestas[i]);//liberando memória
     free (arestas);
-    liberaPais (pais);
-    return mst; //retorna a estrutura da MST
+    liberaPais (pais);//retorna a estrutura da MST
+    return mst;
 }
 
 void liberaMst (Mst* mst)

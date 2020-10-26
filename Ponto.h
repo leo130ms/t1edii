@@ -1,6 +1,6 @@
 #ifndef PONTO_H
 #define PONTO_h
-#define MAXTAM 500
+#define MAXTAM 2^64
 
 typedef struct ponto Ponto;
 
