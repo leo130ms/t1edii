@@ -61,7 +61,7 @@ int achaString (char** texto, int numStrings, char* word)
         }
     }
 
-    noCommaW[j] = '\0';
+    noCommaW[j++] = '\0';
 
     for (int i = 0; i < numStrings; i++)
     {
@@ -88,7 +88,9 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
     strcat (grupo, ponto2);
     strcat (grupo, ",");
 
-    for (int j = 1; j < retornaQuantidade (mst); j++)
+    /*Segmento para imprimir o primeiro dos grupos*/
+
+    for (int j = 1; j < retornaQuantidade (mst); j++) //procura nos vetores de pontos os pontos correspondentes às arestas da MST e os insere uma matriz de strings
     {
         char ponto1[MAXTAM];
         char ponto2[MAXTAM];
@@ -96,7 +98,7 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
         int jndex2 = retornaIndex_2 (mst, j);
         if (jndex1 == index01)
         {
-            strcat (grupo, imprimePonto (pontos[jndex2]));
+            strcat (grupo, imprimePonto (pontos[jndex2])); 
             strcat (grupo, ",");
         }
         else if (jndex2 == index02)
@@ -119,7 +121,7 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
     numGrupos++;
 
 
-    for (int i = 1; i < retornaQuantidade (mst); i++)
+    for (int i = 1; i < retornaQuantidade (mst); i++) //loop usado para construir os demais grupos
     {
         char grupo[MAXTAM];
         int index1 = retornaIndex_1 (mst, i);
@@ -130,10 +132,9 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
         strcpy (ponto2, imprimePonto (pontos[index2]));
         strcat (grupo, ponto2);
         strcat (grupo, ",");
-        if (achaString (string_saida, numGrupos, grupo) == -1)
+        if (!strstr (string_saida[numGrupos-1], grupo))
         {
-            //printf ("%c %c\n", grupo[0], grupo[1]);
-            for (int j = i+1; j < retornaQuantidade (mst); j++)
+            for (int j = i+1; j < retornaQuantidade (mst); j++) 
             {
                 char ponto1[MAXTAM];
                 char ponto2[MAXTAM];
@@ -162,20 +163,19 @@ void imprimePontosnoArquivo (char* nomeSaida, Mst* mst, Ponto** pontos, int numP
             }
             string_saida[numGrupos] = strdup (grupo);
             numGrupos++;
-            //printf ("%s\n %d\n", string_saida[numGrupos], numGrupos);
         }
 
     }
 
 
-    qsort (string_saida, numGrupos, sizeof (char**), comparaStrings);
+    qsort (string_saida, numGrupos, sizeof (char**), comparaStrings); //Ordenando as strings
 
     for (int i = 0; i < numGrupos; i++)
     {
-        fprintf (saida, "%s\n", string_saida[i]);
+        fprintf (saida, "%s\n", string_saida[i]); //Imprimindo no Arquivo
     }
 
-    for (int i = 0; i < numGrupos; i++)
+    for (int i = 0; i < numGrupos; i++) //liberando memória
     {
         free (string_saida[i]);
     }
@@ -193,15 +193,15 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
     {
         if (c == ',') dimensao++;
         c = fgetc (f);
-    }
+    } //contar a dimensão dos pontos
 
     while (c != EOF)
     {
         if (c == '\n') numPontos++;
         c = fgetc(f); 
-    }
+    } //contar o numero de pontos no arquivo
 
-    rewind(f);
+    rewind(f); //retornando ao começo do arquivo
     Ponto* pontos[numPontos];
 
     for (int i = 0; i <numPontos; i++)
@@ -210,21 +210,17 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
         double coordenadas[dimensao];
 
         fscanf (f, " %[^,],", nome);
-        //printf ("%s ->", nome);
 
         for (int j = 0; j < dimensao; j++)
         {
             fscanf (f, "%lf,", &coordenadas[j]);
-           // printf ("%lf\n", coordenadas[j]);
         }
         pontos[i] = criaponto (nome, dimensao, coordenadas);
-    }
+    } //lendo coisas do arquivo de entrada
 
     fclose (f);
-    //printf ("%d\n", dimensao);
-    //printf ("%d\n", numPontos);
 
-    MatrizY* matriz = criaMatriz (numPontos); 
+    MatrizY* matriz = criaMatriz (numPontos); //Matriz de coordenada criada
  
     for (int i = 0; i < numPontos; i++)
     {
@@ -235,15 +231,14 @@ MatrizY* constroiMatriz (FILE* f, int k, char* nomeSaida)
             else 
             matriz->distancias[i][j] = -1;
         }
-    }
+    } //preenchendo a matriz
 
     Mst* mst = criaMst (matriz);
-    removeKelementos (mst, k);
-    ImprimeMst (mst);
-    imprimePontosnoArquivo (nomeSaida, mst, pontos, numPontos);
+    removeKelementos (mst, k); //remover os k-1 elementos
+    imprimePontosnoArquivo (nomeSaida, mst, pontos, numPontos); //função para imprimir na saida 
+    //liberar memória
     liberaMst (mst);
-    destroiPontos (pontos, numPontos);
-    //imprimePontos (pontos, numPontos);
+    destroiPontos (pontos, numPontos); 
     return matriz;  
 }
 

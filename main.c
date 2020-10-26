@@ -17,10 +17,9 @@ int main (int argc, char** argv)
         printf ("Arquivo %s não encontrado!\n", nomeArquivo);
         exit(1);
     }
-    MatrizY* y = constroiMatriz (f, k, argv[3]);
+    MatrizY* y = constroiMatriz (f, k, argv[3]); // Função responsável por criar a matriz e A MST e imprimir no arquivo de saída os grupos
 
-    liberaMatriz (y);
-    printf ("\n ------------------------------------------------------------------------\n");
+    liberaMatriz (y); // Função para liberar a memória alocada pela Matriz y;
 
    // imprimeMatriz(y);
     return 0;

@@ -45,35 +45,31 @@ Mst* criaMst(MatrizY* y){
                index++;   
           //  }
         }
-    }
+    } //Criando o vetor com todas as Arestas
 
 
-    Pais* pais = criaPais (index);
-    ordenaArestas (arestas, index);
+    Pais* pais = criaPais (index); //Vetor usado para fazer as Unions
+    ordenaArestas (arestas, index); //Ordenando o vetor de Arestas via Qsort
     mst->arestas = (Aresta**) malloc (sizeof (Aresta*) * index);
 
-    //printf ("%d %d\n", index, (dim * dim));
 
     for (int i = 0; i < index; i++)
     {
-        if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais))
+        if (!UF_connected (arestas[i]->index_1, arestas[i]->index_2, pais)) //Se duas arestas não estiverem conectadas 
         {
-            UF_union (arestas[i]->index_1, arestas[i]->index_2, pais);
-            //printf ("UF_union OK\n\n\n\n\n\n");
+            UF_union (arestas[i]->index_1, arestas[i]->index_2, pais); //Une as duas arestas com Weighted Quick Union, usando compressão de caminho
 
-            mst->arestas[mst->qtd] = criaAresta (arestas[i]->index_1, arestas[i]->index_2, arestas[i]->peso);
-            //printf ("mst.arestas OK\n\n\n\n\n\n");
+            mst->arestas[mst->qtd] = criaAresta (arestas[i]->index_1, arestas[i]->index_2, arestas[i]->peso); //è criada uma nova aresta
 
-            mst->qtd++;
-            //printf ("mst->qtd OK\n\n\n\n\n\n");
+            mst->qtd++; //quantidade de arestas na mst é incrementada
         }
     }
 
     for (int i = 0; i < index; i++)
-        liberaAresta (arestas[i]);
+        liberaAresta (arestas[i]); //liberando memória
     free (arestas);
     liberaPais (pais);
-    return mst;
+    return mst; //retorna a estrutura da MST
 }
 
 void liberaMst (Mst* mst)
@@ -125,9 +121,3 @@ int retornaQuantidade (Mst* mst){
 Aresta* retornaAresta (Mst* mst, int i){
     return mst->arestas[i];
 }
-
-//fazer um imprime mst para ajudar
-
-//implementar o qsort e ordenar as arestas por peso
-
-//continuar a mst
